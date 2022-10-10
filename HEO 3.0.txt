@@ -1,0 +1,157 @@
+//HelpEachOther Software v3.0
+//Fei Boyi 2022.10
+#include <iostream>
+#include <fstream>
+
+using namespace std;
+
+int main() {
+    ifstream fr;//读入
+    ofstream fw;//输出
+    int i = 0;
+    int max = 10000;//列表中最多的项目数
+    string items[max];//物品清单
+
+    fr.open("E:\\HelpEachOtherList.txt");//打开文件
+    for(int j = 0; j < max; j++)
+    {
+        fr >> items[j];
+        if(items[j] != ""){
+            i += 1;
+        }
+    }
+    fr.close();//关闭文件
+    ofstream outFile;
+    //主菜单
+    cout << "===============HelpEachOther Software v3.0===============" << endl;
+    cout << endl << endl << "------------------------<Readme>-------------------------" <<endl;
+    cout << "Number 1~5 are correspondent to the options" << endl;
+    cout << "1:<Addition> add an item" << endl;
+    cout << "2:<Deletion> delete the last item" << endl;
+    cout << "3:<Check>    see the item list" << endl;
+    cout << "4:<Search>   find an item" << endl;
+    cout << "5:<Quit>     save the list" << endl;
+    cout << "---------------------------------------------------------" << endl;
+    cout << endl << endl << "-------------------------<Menu>--------------------------" <<endl;
+    cout << "1:<Addition> 2:<Deletion> 3:<Check> 4:<Search> 5:<Quit>" << endl;
+    cout  <<"[Please input a number to select your next option]:";
+    LOOP:
+    int unit;
+    string order;
+    cin >> order;
+    cout << "---------------------------------------------------------" << endl;
+    unit = atoi(order.c_str());
+    string tar;//4.Search中需要找寻的对象
+    int result;//4.Search中找寻对象的结果
+    switch(unit){
+        //1.Addition：加入物品
+        case 1 : {
+            cout << endl << endl << "-----------------------<Addition>------------------------" <<endl;
+            cout << "[Please enter the name of the item you want to add]:";
+            string neo = "a";
+            cin >> neo;
+            items[i] = neo;
+            i = i + 1;
+            cout << "-Successful Addition." << endl ;
+            cout << "---------------------------------------------------------" << endl;
+            break;
+        }
+        //2.Deletion：删除物品
+        case 2 :
+            cout << endl << endl << "-----------------------<Deletion>------------------------" <<endl;
+            if(i == 0){
+                cout << "-Unsuccessful Deletion: There is no item in the list." << endl;
+            }
+            else {
+                items[i] = "";
+                cout << "-Successful Deletion: Last item deleted." << endl;
+                i = i - 1;
+            }
+            cout << "---------------------------------------------------------" << endl;
+            break;
+        //3.Check：查看清单
+        case 3 :
+            cout << endl << endl << "-------------------------<Check>-------------------------" <<endl;
+            if(i == 0){
+                cout << "-There is no item in the list." << endl;
+            }
+            else {
+                cout << "-The item list is as follows:" << endl;
+                for(int j=0; j < i; j++){
+                    cout << "No." << (j+1) << "  " << items[j] << endl;
+                }
+            }
+            cout << "---------------------------------------------------------" << endl;
+            break;
+        //4.Search：查找物品
+        case 4 :
+            cout << endl << endl << "------------------------<Search>-------------------------" <<endl;
+            cout << "[Insert the name of the item you are looking for]:";
+            cin >> tar;
+            result = 0;
+            for(int j=0; j < i; j++){
+                if(items[j] == tar){
+                    result = 1;
+                    cout << "-YES, the item you are looking for is already in the list." << endl;
+                    cout << "1 : Delete it." << endl;
+                    cout << "2 : Do not delete it." << endl;
+                    cout << "[Do you want to delete it? Please input 1 or 2]:";
+                    string del_order;
+                    int del;
+                    cin >> del_order;
+                    del = atoi(del_order.c_str());
+                    if(del == 1){
+                        for(int k=j ; k < i ; k++){
+                            items[k] = items[k+1];
+                        }
+                        i = i - 1;
+                        cout << "-Successful Deletion: This item deleted." << endl;
+                    }
+                    if(del != 1){
+                        cout << "-OK! This item is NOT deleted." << endl;
+                    }
+                    break;
+                }
+            }
+            if(result == 0) {
+                cout << "-Sorry, the item you are looking for is NOT in the list." << endl;
+            }
+            cout << "---------------------------------------------------------" << endl;
+            break;
+        //5.Quit：保存清单并关闭程序
+        case 5 :
+            break;
+        //0.Error：面对非法输入给出提示
+        default :
+            unit = 0;
+            cout << endl << endl << "-------------------------<Error>-------------------------" <<endl;
+            cout << "-Illegal Input: Please choose from 1, 2, 3, 4, 5." << endl ;
+            cout << "---------------------------------------------------------" << endl;
+            break;
+    }
+    //如果不是5.Quit，就返回主菜单
+    if(unit != 5){
+        cout << endl << endl << "-------------------------<Menu>--------------------------" <<endl;
+        cout << "1:<Addition> 2:<Deletion> 3:<Check> 4:<Search> 5:<Quit>" << endl;
+        cout  <<"[Please input a number to select your next option]:";
+        goto LOOP;
+    }
+    //5.Quit后续：保存清单并关闭程序
+    fw.open("E:\\HelpEachOtherList.txt");//打开文件
+    //逐个写入物品
+    for(int j = 0; j < i; j++)
+    {
+        fw << items[j];
+        fw << endl;
+    }
+    //关闭文件
+    fw.close();
+    cout << endl << endl << "-------------------------<Quit>--------------------------" <<endl;
+    cout << "-The list is already saved." << endl;
+    cout << "---------------------------------------------------------" << endl << endl << endl;
+    cout << "======================Process ends=======================";
+    return 0;
+}
+//还需要解决的问题
+//1.加入的物品需要多种属性，例如价格，数量；这需要改变现有的字符串数组存储方式
+//2.改变goto体系，便于软件维护

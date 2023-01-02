@@ -1,0 +1,478 @@
+//HelpEachOther2 Software v2.1
+//Fei Boyi 2022.12
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+//type类型---------------------------------------------------------------------------------------------------
+class type{
+public:
+    string name;//类型名
+    string A1;//属性1
+    string A2;//属性2
+    type *next;//指向下一个类型
+};
+
+//单链表头尾
+type *th,*te;
+
+//建立单链表
+void initiateType(){
+    cout<<"初始化类型名录"<<endl;
+    th=new type;
+    te=th;
+    te->next=nullptr;
+}
+
+//添加类型
+void cinType(){
+    cout<<"添加类型"<<endl;
+        type *n;
+        n=new type;
+        cout<<"请输入类型名称：";
+        cin>>n->name;
+        cout<<"请输入该类型附属的属性1：";
+        cin>>n->A1;
+        cout<<"请输入该类型附属的属性2：";
+        cin>>n->A2;
+        n->next= nullptr;
+        te->next=n;
+        te=n;
+    cout<<"添加成功"<<endl;
+}
+
+//展示类型
+void coutTypes(){
+    cout<<"以下是所有类型："<<endl;
+    type *n;
+    cout<<"名称"<<' '<<"属性1"<<' '<<"属性2"<<endl;
+    for(n=th->next;n!=nullptr;n=n->next){
+        cout<<n->name<<' '<<n->A1<<' '<<n->A2<<endl;
+    }
+}
+
+//搜索类型
+void searchType(){
+    cout<<"请输入您要查找的类型关键词：";
+    string key;
+    cin>>key;
+    type *sch;
+    cout<<"查找到以下类型："<<endl;
+    cout<<"名称"<<' '<<"属性1"<<' '<<"属性2"<<endl;
+    for(sch=th->next;sch!=nullptr;sch=sch->next){
+        if((sch->name==key)||(sch->A1==key)||(sch->A2==key)){
+            cout<<sch->name<<' '<<sch->A1<<' '<<sch->A2<<endl;
+        }
+    }
+}
+
+//删除类型
+void deleteType(){
+    cout<<"请输入您要删除的类型名称：";
+    string key;
+    cin>>key;
+    type *sch;
+    for(sch=th;sch->next!=nullptr;sch=sch->next){
+        if(sch->next->name==key){
+            sch->next=sch->next->next;
+        }
+    }
+    cout<<"删除成功"<<endl;
+}
+
+//item物品----------------------------------------------------------------------------------------------
+class item{
+public:
+    string itemType;//物品所属类型
+    type *itype;//指向类型的指针
+    string name;//物品名称
+    string A1;//属性1
+    string A2;//属性2
+    item *next;//指向下一个物品的指针
+};
+
+item *ih,*ie;//单链表头尾
+
+//建立单链表
+void initiateItem(){
+    cout<<"初始化物品名录"<<endl;
+    ih=new item;
+    ie=ih;
+    ie->next=nullptr;
+}
+
+//添加物品
+void cinItem(){
+    cout<<"添加物品"<<endl;
+    item *n;
+    n=new item;
+    cout<<"请输入物品所属的类型名称：";
+    cin>>n->itemType;
+    type *sch;
+    for(sch=th->next;sch!=nullptr;sch=sch->next){
+        if(sch->name==n->itemType){
+            n->itype=sch;
+            break;
+        }
+    }
+    cout<<"请输入物品名称：";
+    cin>>n->name;
+    cout<<"请输入物品的"<<n->itype->A1<<"：";
+    cin>>n->A1;
+    cout<<"请输入物品的"<<n->itype->A2<<"：";
+    cin>>n->A2;
+    n->next= nullptr;
+    ie->next=n;
+    ie=n;
+    cout<<"添加成功"<<endl;
+}
+
+//展示物品
+void coutItems(){
+    cout<<"以下是所有物品："<<endl;
+    item *n;
+    for(n=ih->next;n!=nullptr;n=n->next){
+        //cout<<"所属类型"<<' '<<"物品名称"<<' '<<(n->itype)->A1<<' '<<(n->itype)->A2<<endl;
+        cout<<n->itemType<<' '<<n->name<<' '<<n->A1<<' '<<n->A2<<endl;
+    }
+}
+
+//搜索物品
+void searchItem(){
+    cout<<"请输入您要查找的物品关键词：";
+    string key;
+    cin>>key;
+    item *sch;
+    cout<<"查找到以下物品："<<endl;
+    for(sch=ih->next;sch!=nullptr;sch=sch->next){
+        if((sch->itemType==key)||(sch->name==key)||(sch->A1==key)||(sch->A2==key)){
+            //cout<<"物品名称"<<' '<<"所属类型"<<' '<<sch->itype->A1<<' '<<sch->itype->A2<<endl;
+            cout<<sch->itemType<<' '<<sch->name<<' '<<sch->A1<<' '<<sch->A2<<endl;
+        }
+    }
+}
+
+//删除物品
+void deleteItem(){
+    cout<<"请输入您要删除的物品名称：";
+    string key;
+    cin>>key;
+    item *sch;
+    for(sch=ih;sch->next!=nullptr;sch=sch->next){
+        if(sch->next->name==key){
+            sch->next=sch->next->next;
+        }
+    }
+    cout<<"删除成功"<<endl;
+}
+
+//user用户----------------------------------------------------------------------------------------------
+class user{
+public:
+    string name;//用户名
+    string address;//地址
+    string phone;//电话号码
+    bool auth;//批准状态
+    user *next;//指向下一个用户的指针
+};
+
+user *uh,*ue,*presentUser,*administrator;//单链表头尾，当前用户状态，管理员
+
+//建立单链表
+void initiateUser(){
+    cout<<"初始化用户名录"<<endl;
+    uh=new user;
+    ue=uh;
+    ue->next=nullptr;
+    user *U0;
+    U0=new user;
+    U0->auth=false;
+    ue->next=U0;
+    ue=U0;
+    presentUser=U0;
+    administrator=new user;
+    administrator->auth=false;
+}
+
+//添加用户
+void cinUser(){
+    cout<<"添加用户"<<endl;
+    user *n;
+    n=new user;
+    cout<<"请输入用户名：";
+    cin>>n->name;
+    cout<<"请输入住址：";
+    cin>>n->address;
+    cout<<"请输入电话号码：";
+    cin>>n->phone;
+    n->auth=false;
+    n->next= nullptr;
+    ue->next=n;
+    ue=n;
+    cout<<"已发送申请，正在等待管理员审核"<<endl;
+}
+
+//展示用户
+void coutUsers(){
+    cout<<"以下是所有用户："<<endl;
+    user *n;
+    cout<<"用户名称"<<' '<<"住址"<<' '<<"电话号码"<<endl;
+    for(n=uh->next->next;n!=nullptr;n=n->next){
+        cout<<"User"<<' '<<n->name<<' '<<n->address<<' '<<n->phone<<' '<<n->auth<<endl;
+    }
+}
+
+//删除用户
+void deleteUser(){
+    cout<<"请输入您要删除的用户名称：";
+    string key;
+    cin>>key;
+    user *sch;
+    for(sch=uh;sch->next!=nullptr;sch=sch->next){
+        if(sch->next->name==key){
+            sch->next=sch->next->next;
+        }
+    }
+    cout<<"删除成功"<<endl;
+}
+
+//file-------------------------------------------------------------------------------------------------
+//导入数据
+void frAll(){
+    cout<<"导入数据"<<endl;
+    ifstream fr;//读入
+    ofstream fw;//输出
+    fr.open("E:\\HelpEachOtherList.txt");//打开文件
+    string kind;
+    fr>>kind;
+    for(int i=0;i<100;i++){
+        //导入类型
+        if(kind=="type"){
+            type *ty;
+            ty=new type;
+            fr >> ty->name >> ty->A1 >> ty->A2;
+            te->next=ty;
+            te=ty;
+        }
+        //导入物品
+        if(kind=="item"){
+            item *it;
+            it=new item;
+            fr >> it->itemType >> it->name >> it->A1 >> it->A2;
+            ie->next=it;
+            ie=it;
+        }
+        //导入用户
+        if(kind=="user"){
+            user *us;
+            us=new user;
+            fr >> us->name >> us->address >> us->phone >> us->auth;
+            ue->next=us;
+            ue=us;
+        }
+        //终止导入
+        if(kind=="terminator"){
+            break;
+        }
+
+        fr>>kind;
+    }
+    fr.close();//关闭文件
+}
+
+//导出数据
+void fwAll(){
+    cout<<"导出数据"<<endl;
+    ifstream fr;//读入
+    ofstream fw;//输出
+    fw.open("E:\\HelpEachOtherList.txt");//打开文件
+    //导出类型
+    type *ty;
+    for(ty=th->next; ty != nullptr; ty=ty->next){
+        fw << "type" << ' ' << ty->name << ' ' << ty->A1 << ' ' << ty->A2 << endl;
+    }
+    //导出物品
+    item *it;
+    for(it=ih->next; it != nullptr; it=it->next){
+        fw << "item" << ' ' << it->itemType << ' ' << it->name << ' ' << it->A1 << ' ' << it->A2 << endl;
+    }
+    //导出用户
+    user *us;
+    for(us=uh->next->next; us != nullptr; us=us->next){
+        fw << "user" << ' ' << us->name << ' ' << us->address << ' ' << us->phone << ' ' << us->auth << endl;
+    }
+    //添加终止标志
+    fw<<"terminator";
+
+    fw.close();
+    cout<<"数据已保存，欢迎下次使用！"<<endl;
+}
+
+//user management-------------------------------------------------------------------------------------
+//登录
+void login(string userName){
+    cout<<"正在登录"<<endl;
+    user *sch;
+    if(userName=="管理员"){
+        presentUser=administrator;
+        cout<<"成功登录身份：管理员"<<endl;
+    }
+    else{
+        for(sch=uh->next->next;sch!=nullptr;sch=sch->next){
+            if((sch->name==userName)&&(sch->auth==true)){
+                presentUser=sch;
+                cout<<"成功登录身份：正式用户"<<endl;
+                break;
+            }
+        }
+    }
+    //登录失败提示
+    if(presentUser==uh->next){
+        cout<<"登录失败：该用户尚未被批准"<<endl;
+    }
+}
+
+//登出
+void logout(){
+    presentUser=uh->next;
+    cout<<"登出成功"<<endl;
+}
+
+//用户注册批准
+void approveUser(){
+    cout<<"用户注册批准界面"<<endl;
+    user *n;
+    //遍历尚未批准的用户
+    for(n=uh->next->next;n!=nullptr;n=n->next){
+        if(n->auth==false){
+            cout<<"尚未被批准的用户："<<' '<<n->name<<' '<<n->address<<' '<<n->phone<<endl;
+            cout<<"批准该用户，请输入1；不批准该用户，请输入0："<<endl;
+            cin>>n->auth;
+            cout<<"用户"<<n->name;
+            if(n->auth==true)cout<<"已成为正式用户。"<<endl;
+            if(n->auth==false)cout<<"已被拒绝。"<<endl;
+        }
+    }
+}
+
+//Command line user interface-------------------------------------------------------------------------
+//主页面
+void home(){
+    //cout<<"home()"<<endl;
+    int x=0;
+    while(x!=100){
+        //未注册用户
+        if((presentUser->auth==false)&&(presentUser!=administrator)){
+            cout<<"----------未登录用户主界面----------"<<endl;
+            cout<<"登录，输入1；"<<endl;
+            cout<<"新用户注册，输入2；"<<endl;
+            cout<<"退出程序，输入100："<<endl;
+            cin>>x;
+            switch (x){
+                case 2:
+                    cinUser();
+                    continue;
+                case 1:
+                    string userName;
+                    cout<<"请输入用户名："<<endl;
+                    cin>>userName;
+                    login(userName);
+                    continue;
+            }
+        }
+        //已注册用户
+        if(presentUser->auth==true){
+            cout<<"----------正式用户主界面----------"<<endl;
+            cout<<"登出，输入1；"<<endl;
+            cout<<"查看所有类型，输入2；"<<endl;
+            cout<<"查看所有物品，输入3；"<<endl;
+            cout<<"添加物品，输入4；"<<endl;
+            cout<<"搜索物品，输入5；"<<endl;
+            cout<<"删除物品，输入6；"<<endl;
+            cout<<"退出程序，输入100："<<endl;
+            cin>>x;
+            switch (x){
+                case 1:
+                    logout();
+                    continue;
+                case 2:
+                    coutTypes();
+                    continue;
+                case 3:
+                    coutItems();
+                    continue;
+                case 4:
+                    cinItem();
+                    continue;
+                case 5:
+                    searchItem();
+                    continue;
+                case 6:
+                    deleteItem();
+                    continue;
+            }
+        }
+        //管理员
+        if(presentUser==administrator){
+            cout<<"----------管理员主界面----------"<<endl;
+            cout<<"登出，输入1；"<<endl;
+            cout<<"查看所有类型，输入2；"<<endl;
+            cout<<"添加类型，输入3；"<<endl;
+            cout<<"搜索类型，输入4；"<<endl;
+            cout<<"删除类型，输入5；"<<endl;
+            cout<<"审批用户注册，输入6；"<<endl;
+            cout<<"查看所有用户，输入7；"<<endl;
+            cout<<"删除用户，输入8；"<<endl;
+            cout<<"退出程序，输入100："<<endl;
+            cin>>x;
+            switch (x){
+                case 1:
+                    logout();
+                    continue;
+                case 2:
+                    coutTypes();
+                    continue;
+                case 3:
+                    cinType();
+                    continue;
+                case 4:
+                    searchType();
+                    continue;
+                case 5:
+                    deleteType();
+                    continue;
+                case 6:
+                    approveUser();
+                    continue;
+                case 7:
+                    coutUsers();
+                    continue;
+                case 8:
+                    deleteUser();
+                    continue;
+            }
+        }
+        if(x==100){
+            break;
+        }
+    }
+}
+
+//main------------------------------------------------------------------------------------------------
+int main(){
+    cout<<"开始运行"<<endl;
+
+    //初始化
+    initiateType();
+    initiateItem();
+    initiateUser();
+    frAll();
+    //主界面
+    home();
+    //退出
+    //coutTypes();
+    //coutItems();
+    //coutUsers();
+    fwAll();
+};
+

@@ -1,157 +1,219 @@
-//HelpEachOther Software v3.0
-//Fei Boyi 2022.10
+//HelpEachOther Software v1.7
+//Fei Boyi 2022.11
 #include <iostream>
 #include <fstream>
 
 using namespace std;
 
-int main() {
+struct item{
+    string name;//物品名称
+    string owner;//主人名称
+    string phone;//联系方式
+};
+struct item arr[1000];//物品清单
+int i = 0;//此时物品清单中物品个数
+
+//Start:导入清单文档中已有的数据
+void Start(){
     ifstream fr;//读入
     ofstream fw;//输出
-    int i = 0;
-    int max = 10000;//列表中最多的项目数
-    string items[max];//物品清单
-
     fr.open("E:\\HelpEachOtherList.txt");//打开文件
-    for(int j = 0; j < max; j++)
+    for(int j = 0; j < 1000; j++)
     {
-        fr >> items[j];
-        if(items[j] != ""){
-            i += 1;
-        }
+        fr >> arr[j].name;
+        fr >> arr[j].owner;
+        fr >> arr[j].phone;
+        if(arr[j].name != "\0") i += 1;
     }
     fr.close();//关闭文件
     ofstream outFile;
-    //主菜单
-    cout << "===============HelpEachOther Software v3.0===============" << endl;
-    cout << endl << endl << "------------------------<Readme>-------------------------" <<endl;
-    cout << "Number 1~5 are correspondent to the options" << endl;
-    cout << "1:<Addition> add an item" << endl;
-    cout << "2:<Deletion> delete the last item" << endl;
-    cout << "3:<Check>    see the item list" << endl;
-    cout << "4:<Search>   find an item" << endl;
-    cout << "5:<Quit>     save the list" << endl;
-    cout << "---------------------------------------------------------" << endl;
-    cout << endl << endl << "-------------------------<Menu>--------------------------" <<endl;
-    cout << "1:<Addition> 2:<Deletion> 3:<Check> 4:<Search> 5:<Quit>" << endl;
-    cout  <<"[Please input a number to select your next option]:";
-    LOOP:
+}
+
+//Readme:选项介绍
+void Readme(){
+    cout << "=========HEO 7.0=========" << endl;
+    cout << endl << "----------<说明>----------" <<endl;
+    cout << "1~5的数字对应以下操作：" << endl;
+    cout << "1:<添加> 向清单中添加一个物品" << endl;
+    cout << "2:<删除> 查找并删除特定物品" << endl;
+    cout << "3:<查看> 查看清单" << endl;
+    cout << "4:<搜索> 查看特定物品" << endl;
+    cout << "5:<退出> 保存清单并退出" << endl;
+    cout << "-------------------------" << endl;
+}
+
+//Menu:主菜单界面，函数返回一个int指示解析来的操作
+int Menu(){
     int unit;
-    string order;
+    cout << endl << "----------<菜单>----------" <<endl;
+    cout << "1:<添加> 2:<删除> 3:<查看>"<< endl <<"4:<搜索> 5:<退出>" << endl;
+    cout <<"[请输入一个数字来选择操作]:";
+    string order;//选择操作的指令
     cin >> order;
-    cout << "---------------------------------------------------------" << endl;
-    unit = atoi(order.c_str());
-    string tar;//4.Search中需要找寻的对象
-    int result;//4.Search中找寻对象的结果
-    switch(unit){
-        //1.Addition：加入物品
-        case 1 : {
-            cout << endl << endl << "-----------------------<Addition>------------------------" <<endl;
-            cout << "[Please enter the name of the item you want to add]:";
-            string neo = "a";
-            cin >> neo;
-            items[i] = neo;
-            i = i + 1;
-            cout << "-Successful Addition." << endl ;
-            cout << "---------------------------------------------------------" << endl;
-            break;
-        }
-        //2.Deletion：删除物品
-        case 2 :
-            cout << endl << endl << "-----------------------<Deletion>------------------------" <<endl;
-            if(i == 0){
-                cout << "-Unsuccessful Deletion: There is no item in the list." << endl;
+    cout << "-------------------------" << endl;
+    unit = atoi(order.c_str());//防止非法输入
+    return unit;
+}
+
+//Addition:执行添加操作，添加一个物品
+void Addition(){
+    cout << endl << "----------<添加>----------" <<endl;
+    cout << "[请输入物品名称]:";
+    string neo;
+    cin >> neo;
+    arr[i].name = neo;
+    cout << "[请输入物品主人]:";
+    cin >> neo;
+    arr[i].owner = neo;
+    cout << "[请输入联系电话]:";
+    cin >> neo;
+    arr[i].phone = neo;
+    i = i + 1;
+    cout << "-添加成功." << endl ;
+    cout << "-------------------------" << endl;
+}
+
+//Deletion:执行删除功能，删除最后一件物品
+void Deletion(){
+    cout << endl << "----------<删除>----------" <<endl;
+    cout << "[请输入需要删除的物品名称]:";
+    string tar;//需要删除的物品名称
+    cin >> tar;
+    int SearchResult = 0;//是否有符合条件的物品
+    int SeveralResult = 0;//符合条件的物品是否有多个
+    for(int j=0; j < i; j++) {
+        if (tar == arr[j].name) {
+            SearchResult = 1;
+            if(SeveralResult == 0)cout << "-这件物品符合要求." << endl;
+            else{
+                cout << endl << "-还有这件物品也符合要求." << endl;
             }
-            else {
-                items[i] = "";
-                cout << "-Successful Deletion: Last item deleted." << endl;
+            cout << "物品名称" << "    " << "物品主人" << "    " << "联系方式" << endl;
+            cout << arr[j].name << "    " << arr[j].owner << "    " << arr[j].phone << endl;
+            cout << "1:<删除>" << endl;
+            cout << "2:<不删除>" << endl;
+            cout << "[你想要删除这件物品吗? 请输入1或2.]:";
+            string del_order;//是否删除物品的指令
+            int del;
+            cin >> del_order;
+            del = atoi(del_order.c_str());//防止非法输入
+            if (del == 1) {
+                for (int k = j; k < i; k++) {
+                    arr[k].name = arr[k + 1].name;
+                    arr[k].owner = arr[k + 1].owner;
+                    arr[k].phone = arr[k + 1].phone;
+                }
                 i = i - 1;
+                cout << "-删除成功." << endl;
             }
-            cout << "---------------------------------------------------------" << endl;
-            break;
-        //3.Check：查看清单
-        case 3 :
-            cout << endl << endl << "-------------------------<Check>-------------------------" <<endl;
-            if(i == 0){
-                cout << "-There is no item in the list." << endl;
+            if (del != 1) {
+                cout << "-好的,没有删除." << endl;
             }
-            else {
-                cout << "-The item list is as follows:" << endl;
-                for(int j=0; j < i; j++){
-                    cout << "No." << (j+1) << "  " << items[j] << endl;
-                }
-            }
-            cout << "---------------------------------------------------------" << endl;
-            break;
-        //4.Search：查找物品
-        case 4 :
-            cout << endl << endl << "------------------------<Search>-------------------------" <<endl;
-            cout << "[Insert the name of the item you are looking for]:";
-            cin >> tar;
-            result = 0;
-            for(int j=0; j < i; j++){
-                if(items[j] == tar){
-                    result = 1;
-                    cout << "-YES, the item you are looking for is already in the list." << endl;
-                    cout << "1 : Delete it." << endl;
-                    cout << "2 : Do not delete it." << endl;
-                    cout << "[Do you want to delete it? Please input 1 or 2]:";
-                    string del_order;
-                    int del;
-                    cin >> del_order;
-                    del = atoi(del_order.c_str());
-                    if(del == 1){
-                        for(int k=j ; k < i ; k++){
-                            items[k] = items[k+1];
-                        }
-                        i = i - 1;
-                        cout << "-Successful Deletion: This item deleted." << endl;
-                    }
-                    if(del != 1){
-                        cout << "-OK! This item is NOT deleted." << endl;
-                    }
-                    break;
-                }
-            }
-            if(result == 0) {
-                cout << "-Sorry, the item you are looking for is NOT in the list." << endl;
-            }
-            cout << "---------------------------------------------------------" << endl;
-            break;
-        //5.Quit：保存清单并关闭程序
-        case 5 :
-            break;
-        //0.Error：面对非法输入给出提示
-        default :
-            unit = 0;
-            cout << endl << endl << "-------------------------<Error>-------------------------" <<endl;
-            cout << "-Illegal Input: Please choose from 1, 2, 3, 4, 5." << endl ;
-            cout << "---------------------------------------------------------" << endl;
-            break;
+            SeveralResult = 1;
+        }
     }
-    //如果不是5.Quit，就返回主菜单
-    if(unit != 5){
-        cout << endl << endl << "-------------------------<Menu>--------------------------" <<endl;
-        cout << "1:<Addition> 2:<Deletion> 3:<Check> 4:<Search> 5:<Quit>" << endl;
-        cout  <<"[Please input a number to select your next option]:";
-        goto LOOP;
+    if (SearchResult == 0){
+        cout << "-清单中没有这项物品." << endl;
     }
-    //5.Quit后续：保存清单并关闭程序
+    cout << "-------------------------" << endl;
+}
+
+//Check:执行查看功能，输出清单
+void Check(){
+    cout << endl << "----------<查看>----------" <<endl;
+    if(i == 0){
+        cout << "-清单中没有任何物品." << endl;
+    }
+    else {
+        cout << "-清单中有以下物品:" << endl;
+        cout << "物品名称" << "    " << "物品主人" << "    " << "联系方式" << endl;
+        for(int j=0; j < i; j++){
+            cout << arr[j].name << "    " << arr[j].owner << "    " << arr[j].phone << endl;
+        }
+    }
+    cout << "-------------------------" << endl;
+}
+
+//Search:执行搜索功能，查找某一项物品并选择是否删除
+void Search(){
+    cout << endl << "----------<搜索>----------" <<endl;
+    cout << "[请输入需要搜索的物品名称]:";
+    string tar;//需要搜索的物品名称
+    cin >> tar;
+    int SearchResult = 0;//是否有符合条件的物品
+    int TitleDone = 0;//是否已经输出了表格头
+    for(int j=0; j < i; j++) {
+        if (tar == arr[j].name) {
+            SearchResult = 1;
+            if (TitleDone == 0){
+                TitleDone = 1;
+                cout << "-以下物品符合要求:" << endl;
+                cout << "物品名称" << "    " << "物品主人" << "    " << "联系方式" << endl;
+            }
+            cout << arr[j].name << "    " << arr[j].owner << "    " << arr[j].phone << endl;
+        }
+    }
+    if(SearchResult == 0) {
+        cout << "-清单中没有这项物品." << endl;
+    }
+    cout << "-------------------------" << endl;
+}
+
+//Error:给出非法输入提示
+void Error(){
+    cout << endl << "----------<错误>----------" <<endl;
+    cout << "-非法输入: 请输入数字1, 2, 3, 4, 5中的一个." << endl ;
+    cout << "-------------------------" << endl;
+}
+
+//Quit:将新的清单保存到清单文档中并退出程序
+void Quit(){
+    ifstream fr;//读入
+    ofstream fw;//输出
     fw.open("E:\\HelpEachOtherList.txt");//打开文件
     //逐个写入物品
     for(int j = 0; j < i; j++)
     {
-        fw << items[j];
-        fw << endl;
+        fw << arr[j].name << endl;
+        fw << arr[j].owner << endl;
+        fw << arr[j].phone << endl;
     }
     //关闭文件
     fw.close();
-    cout << endl << endl << "-------------------------<Quit>--------------------------" <<endl;
-    cout << "-The list is already saved." << endl;
-    cout << "---------------------------------------------------------" << endl << endl << endl;
-    cout << "======================Process ends=======================";
+    cout << endl << "----------<退出>----------" <<endl;
+    cout << "-清单已保存，感谢使用." << endl;
+    cout << "-------------------------" << endl << endl << endl;
+    cout << "=======程序运行结束========";
+}
+
+int main() {
+    Start();
+    Readme();
+    int over = 0;
+    while(over == 0) {
+        switch (Menu()) {
+            case 1 :
+                Addition();
+                break;
+            case 2 :
+                Deletion();
+                break;
+            case 3 :
+                Check();
+                break;
+            case 4 :
+                Search();
+                break;
+            case 5 :
+                Quit();
+                over = 1;
+                break;
+            default :
+                Error();
+                break;
+        }
+    }
+
     return 0;
 }
-//还需要解决的问题
-//1.加入的物品需要多种属性，例如价格，数量；这需要改变现有的字符串数组存储方式
-//2.改变goto体系，便于软件维护
+
